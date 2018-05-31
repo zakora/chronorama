@@ -24,6 +24,7 @@ defmodule VizProxy.Application do
       )
 
     children = [
+      {Registry, keys: :duplicate, name: VizProxy.Registry},  # NOTE maybe use System.schedulers_online to boost throughput
       {VizProxy.Piper, name: Piper},
     ]
 
@@ -56,13 +57,17 @@ defmodule VizProxy.WSHandler do
   @behaviour :cowboy_websocket
 
   def init(req, state) do
+    # NOTE any state here is setup temporarily for the WS connection,
+    #      after that it is scrapped and the real init takes place in
+    #      websocket_init/1
     Logger.debug(fn -> "Init new WS connection" end)
     {:cowboy_websocket, req, state}
   end
 
   def websocket_init(state) do
-    # TODO registering with an atom prevents handling multiple WS connections, maybe use Elixir Registry?
-    Process.register(self(), :ws_serve)
+    {:ok, _} = Registry.register(VizProxy.Registry, "ws_connections", nil)
+    Logger.debug(fn -> "WS init" end)
+    Logger.debug(fn -> "pids: #{inspect Registry.lookup(VizProxy.Registry, "ws_connections")}" end)
     {:ok, state}
   end
 
@@ -72,7 +77,7 @@ defmodule VizProxy.WSHandler do
   end
 
   def websocket_handle({:text, content}, state) do
-    {:reply, {:text, "got msg #{content}"}, state}
+    {:reply, {:text, "forwarding msg #{content}"}, state}
   end
 
   def websocket_handle(_frame, state) do

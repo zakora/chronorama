@@ -24,7 +24,11 @@ defmodule VizProxy.Piper do
 
   def handle_call({:new_frame, data}, _from, frames) do
     Logger.debug(fn -> "got new frame with: #{data}" end)
-    send(:ws_serve, data |> String.trim)
+    Logger.debug(fn -> "pids: #{inspect Registry.lookup(VizProxy.Registry, "ws_connections")}" end)
+    data = String.trim data
+    Registry.dispatch(VizProxy.Registry, "ws_connections", fn entries ->
+      for {pid, _} <- entries, do: send(pid, data)
+    end)
     frames = frames ++ [data]
     {:reply, frames, frames}
   end

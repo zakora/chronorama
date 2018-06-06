@@ -28,7 +28,7 @@ defmodule VizProxy.Application do
     ]
 
     opts = [strategy: :one_for_one]
-    IO.puts("Hello, startin gthe app")
+    IO.puts("Starting the app")
     Supervisor.start_link(children, opts)
   end
 end
@@ -44,9 +44,8 @@ defmodule VizProxy.WSHandler do
   @behaviour :cowboy_websocket
 
   def init(req, state) do
-    # NOTE any state here is setup temporarily for the WS connection,
-    #      after that it is scrapped and the real init takes place in
-    #      websocket_init/1
+    # NOTE any state here is setup temporarily for the WS connection. After
+    # that, it is scrapped and the real init takes place in websocket_init/1.
     Logger.debug(fn -> "Init new WS connection" end)
     {:cowboy_websocket, req, state}
   end
@@ -72,7 +71,7 @@ defmodule VizProxy.WSHandler do
   end
 
   def websocket_info(info, state) do
-    Logger.debug(fn -> "Recved erlang msg: #{inspect info}" end)
+    Logger.debug(fn -> "Received erlang msg: #{inspect info}" end)
     {:reply, {:text, info}, state}
   end
 end

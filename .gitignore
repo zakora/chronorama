@@ -1,15 +1,15 @@
 # Elixir
-/vizproxy/_build/
-/vizproxy/cover/
-/vizproxy/deps/
-/vizproxy/doc/
-/vizproxy/.fetch
+/src/elixir/_build/
+/src/elixir/cover/
+/src/elixir/deps/
+/src/elixir/doc/
+/src/elixir/.fetch
 erl_crash.dump
 *.ez
 vizproxy-*.tar
 
 # ELM
-/elm-stuff/
+/src/elm/elm-stuff/
 
 # artifacts
-/vizproxy/priv/main.html
+/src/elixir/priv/main.html

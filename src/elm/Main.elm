@@ -113,7 +113,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
   batch
   [ WebSocket.listen "ws://localhost:8899/ws" NewMessage
-  -- , AnimationFrame.diffs NewFrame
+  , AnimationFrame.diffs NewFrame
   ]
 
 
@@ -121,10 +121,9 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     div []
-    [ "diff: " ++ (toString model.diff) |> Html.text
+    [ "diff: " ++ (toString model.diff) ++ "ms" |> Html.text
     , collage 600 400
-      (("collage etext euh fi ti ffi efface " |> fromString |> Collage.text)
-      :: (model.points |> List.map toSquare))
+      (model.points |> List.map toSquare)
       |> toHtml
     ]
 

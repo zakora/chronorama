@@ -1,18 +1,15 @@
-.PHONY: debug, serve, pyserve
+.PHONY: debug, serve, pyserve, clean
 
 # Elixir server
-serve: vizproxy/priv/main.html
-	cd vizproxy && mix run --no-halt
+serve: src/elixir/priv/main.html
+	cd src/elixir && mix run --no-halt
 
-debug: vizproxy/priv/main.html
-	cd vizproxy && iex -S mix
+debug: src/elixir/priv/main.html
+	cd src/elixir && iex -S mix
 
-vizproxy/priv/main.html: Main.elm
-	elm-make Main.elm --output vizproxy/priv/main.html
+src/elixir/priv/main.html: src/elm/Main.elm
+	cd src/elm && elm-make Main.elm --output ../elixir/priv/main.html
 
-# Python server
-pyserve: main.html
-	python -u serve.py
-
-main.html: Mail.elm
-	elm-make Main.elm --output main.html
+# Make-related
+clean:
+	-rm -f src/elixir/priv/main.html src/python/static/main.html

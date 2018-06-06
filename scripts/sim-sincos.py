@@ -18,5 +18,5 @@ while True:
 
     # Slow down the simulation so we can visually grasp what is going on.
     sleep(1 / 30)
-    
+
     i += 0.1

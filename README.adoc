@@ -4,6 +4,10 @@ Chronorama is a visualization tool for 2D time series.
 
 '''
 
+image::assets/chronorama.gif[Chronorama demo video]
+
+'''
+
 == Getting started
 
 === Requirements
@@ -46,7 +50,7 @@ Check http://localhost:8899 for the visualization.
 
 Here we assume that the python script `sim-sincos.py` generates valid data on stdout.
 
- python scripts/sim-sincos.py | make serve
+ python -u scripts/sim-sincos.py | make serve
 
 Check http://localhost:8899 for the visualization.
 

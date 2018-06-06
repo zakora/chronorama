@@ -10,7 +10,6 @@ defmodule VizProxy.Application do
     dispatch =
       :cowboy_router.compile([
         {"localhost", [
-          {"/dyn", VizProxy.HelloHandler, []},
           {"/ws", VizProxy.WSHandler, []},
           {"/", :cowboy_static, {:priv_file, :vizproxy, "main.html"}},
         ]},
@@ -37,18 +36,6 @@ end
 defmodule VizProxy.HelloHandler do
   def init(req, state) do
     Logger.debug(fn -> "In init" end)
-    handle(req, state)
-  end
-
-  def handle(request, state) do
-    Logger.debug(fn -> "In handle" end)
-    req = :cowboy_req.reply(
-      200,
-      %{"content-type" => "text/plain"},
-      "Hoakzepokpa ozepfopok",
-      request
-    )
-
     {:ok, req, state}
   end
 end

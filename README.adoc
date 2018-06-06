@@ -11,9 +11,11 @@ Chronorama is a visualization tool for 2D time series.
 - https://elixir-lang.org/install.html[Elixir] >= 1.6
 - https://guide.elm-lang.org/install.html[Elm] == 0.18
 
+
 === Installation
 
 Chronorama is not packaged yet, so for now you should either clone or download this repository.
+
 
 === Running
 
@@ -47,3 +49,10 @@ Here we assume that the python script `sim-sincos.py` generates valid data on st
  python scripts/sim-sincos.py | make serve
 
 Check http://localhost:8899 for the visualization.
+
+
+== Planned features
+
+* [ ] UI: WebGL backend (at least try to see if we get performance improvements)
+* [ ] UI: change settings (like frustum, artifical delay, …)
+* [ ] server: play, pause, backward, forward

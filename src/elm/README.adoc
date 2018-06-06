@@ -1,0 +1,3 @@
+= Chronorama - UI
+
+This directory contains the UI part of Chronorama, made with Elm.

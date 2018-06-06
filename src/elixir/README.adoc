@@ -1,0 +1,3 @@
+= Chronorama — Elixir server
+
+This directory contains the Chronorama server, built in Elixir.

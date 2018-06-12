@@ -58,5 +58,6 @@ Check http://localhost:8899 for the visualization.
 == Planned features
 
 * [ ] UI: WebGL backend (at least try to see if we get performance improvements)
-* [ ] UI: change settings (like frustum, artifical delay, …)
+* [ ] UI: change settings (like artifical delay, canvas size, …)
+* [ ] UI: activity histograms (temporal and spatial)
 * [ ] server: play, pause, backward, forward

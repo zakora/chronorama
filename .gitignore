@@ -9,7 +9,11 @@ erl_crash.dump
 vizproxy-*.tar
 
 # ELM
-/src/elm/elm-stuff/
+elm-stuff/
+/elm-package.json
+
+# Python
+__pycache__/
 
 # artifacts
 /src/elixir/priv/main.html

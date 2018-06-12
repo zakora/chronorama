@@ -1,5 +1,5 @@
 -- core
-import Color exposing (hsla)
+import Color exposing (rgba, rgb)
 import Platform.Sub exposing (batch)
 import Result exposing (withDefault)
 import String exposing (split, trim)
@@ -244,11 +244,19 @@ display model =
   collage
     model.display.width
     model.display.height
-    (model.points |> List.map toSquare) |> toHtml
+    ((background model) :: (model.points |> List.map toSquare)) |> toHtml
 
+background : Model -> Form
+background model =
+  let
+    width = model.display.width |> toFloat
+    height = model.display.height |> toFloat
+
+  in
+    filled (rgb 21 30 46) (rect width height)
 
 -- VIEW HELPERS
 toSquare : Point -> Form
 toSquare {x, y} =
-  filled (hsla 0.5 0.5 0.6 0.3) (rect 10 10)
+  filled (rgba 250 250 250 0.7) (rect 7 7)
   |> move (x, y)

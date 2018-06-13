@@ -63,15 +63,20 @@ defmodule VizProxy.WSHandler do
   end
 
   def websocket_handle({:text, content}, state) do
-    {:reply, {:text, "forwarding msg #{content}"}, state}
+    # Callback called for every text WS frame received.
+    Logger.debug(fn -> "Received WS text frame: #{content}" end)
+    {:ok, state}
   end
 
-  def websocket_handle(_frame, state) do
+  def websocket_handle(frame, state) do
+    # Callback called for every WS frame received.
+    Logger.debug(fn -> "Received WS frame: #{frame}" end)
     {:ok, state}
   end
 
   def websocket_info(info, state) do
-    Logger.debug(fn -> "Received erlang msg: #{inspect info}" end)
+    # Callback called for every erlang message received.
+    Logger.debug(fn -> "Received erlang msg: #{inspect info}. Forwarding to WS client." end)
     {:reply, {:text, info}, state}
   end
 end

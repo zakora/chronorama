@@ -18,6 +18,9 @@ import Element exposing (toHtml)
 import Text exposing (fromString)
 
 
+wsServer = "ws://localhost:8899/ws"
+
+
 main =
   Html.program
     { init = init
@@ -29,10 +32,11 @@ main =
 
 -- MODEL
 type alias Model =
-  { points  : List Point
-  , diff    : Float
-  , frustum : Frustum
-  , display : Display
+  { points    : List Point
+  , diff      : Float
+  , frustum   : Frustum
+  , display   : Display
+  , isStreaming : Bool
   }
 
 type alias Point =
@@ -59,12 +63,15 @@ init =
       -1.0
       (Frustum -1.0 1.0 -1.0 1.0)
       (Display 600 400)
+      False
   , Cmd.none
   )
 
 -- UPDATE
 type Msg
-  = NewMessage String
+  = StartStream
+  | PauseStream
+  | NewMessage String
   | NewFrame Time
   | NewXMin String
   | NewXMax String
@@ -74,6 +81,12 @@ type Msg
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
+    StartStream ->
+      ({model | isStreaming = True}, WebSocket.send wsServer "READY")
+
+    PauseStream ->
+      ({model | isStreaming = False}, WebSocket.send wsServer "PAUSE")
+
     NewMessage str ->
       ({ model | points = str |> getPoints |> (List.map (toDisplaySpace model))} , Cmd.none)
 
@@ -210,8 +223,8 @@ recPoints values acc =
 subscriptions : Model -> Sub Msg
 subscriptions model =
   batch
-  [ WebSocket.listen "ws://localhost:8899/ws" NewMessage
-  , AnimationFrame.diffs NewFrame
+  [ WebSocket.listen wsServer NewMessage
+  --, AnimationFrame.diffs NewFrame
   ]
 
 
@@ -220,6 +233,7 @@ view : Model -> Html Msg
 view model =
     div []
     [ debug model
+    , controls model
     , config model
     , display model
     ]
@@ -227,6 +241,17 @@ view model =
 debug : Model -> Html Msg
 debug model =
   div [] ["diff: " ++ (toString model.diff) ++ "ms" |> Html.text]
+
+
+controls : Model -> Html Msg
+controls model =
+  let
+    icon = if model.isStreaming then "⏸️" else "▶️"
+    msg = if model.isStreaming then PauseStream else StartStream
+  in
+    div
+      [ onClick msg ]
+      [ icon |> Html.text ]
 
 config : Model -> Html Msg
 config model =

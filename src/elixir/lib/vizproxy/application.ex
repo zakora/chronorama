@@ -24,7 +24,7 @@ defmodule VizProxy.Application do
 
     children = [
       {Registry, keys: :duplicate, name: VizProxy.Registry},  # NOTE maybe use System.schedulers_online to boost throughput
-      {VizProxy.Piper, name: Piper},
+      {VizProxy.Piper, name: VizProxy.Piper},
     ]
 
     opts = [strategy: :one_for_one]
@@ -37,17 +37,18 @@ defmodule VizProxy.WSHandler do
   @behaviour :cowboy_websocket
 
   def init(req, state) do
-    # NOTE any state here is setup temporarily for the WS connection. After
-    # that, it is scrapped and the real init takes place in websocket_init/1.
+    # NOTE any state here is setup temporarily for the HTTP connection to be
+    # upgraded to a WebSocket connection. After that, it is scrapped and the
+    # real init takes place in websocket_init/1.
     Logger.debug(fn -> "Init new WS connection" end)
     {:cowboy_websocket, req, state}
   end
 
-  def websocket_init(state) do
+  def websocket_init(_state) do
     {:ok, _} = Registry.register(VizProxy.Registry, "ws_connections", nil)
     Logger.debug(fn -> "WS init" end)
     Logger.debug(fn -> "pids: #{inspect Registry.lookup(VizProxy.Registry, "ws_connections")}" end)
-    {:ok, state}
+    {:ok, :paused}
   end
 
   def terminate(reason, _partial_req, _state) do
@@ -58,11 +59,20 @@ defmodule VizProxy.WSHandler do
   def websocket_handle({:text, content}, state) do
     # Callback called for every text WS frame received.
     Logger.debug(fn -> "Received WS text frame: #{content}" end)
+
+    case content do
+      "PAUSE" ->
+        VizProxy.Piper.set_paused()
+      "READY" ->
+        VizProxy.Piper.set_streaming()
+    end
+
+    Logger.debug(fn -> "Current state: #{inspect state}" end)
     {:ok, state}
   end
 
   def websocket_handle(frame, state) do
-    # Callback called for every WS frame received.
+    # Callback called for every non-text WS frame received.
     Logger.debug(fn -> "Received WS frame: #{frame}" end)
     {:ok, state}
   end

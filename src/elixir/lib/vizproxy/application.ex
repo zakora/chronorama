@@ -17,7 +17,7 @@ defmodule VizProxy.Application do
 
     {:ok, _} =
       :cowboy.start_clear(
-        VizProxy.HelloHandler,
+        VizProxy.WSServer,
         [{:port, 8899}],
         %{env: %{dispatch: dispatch}}
       )
@@ -30,13 +30,6 @@ defmodule VizProxy.Application do
     opts = [strategy: :one_for_one]
     IO.puts("Starting the app")
     Supervisor.start_link(children, opts)
-  end
-end
-
-defmodule VizProxy.HelloHandler do
-  def init(req, state) do
-    Logger.debug(fn -> "In init" end)
-    {:ok, req, state}
   end
 end
 

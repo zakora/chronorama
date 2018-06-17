@@ -16,7 +16,7 @@ elm-stuff/
 __pycache__/
 
 # artifacts
-/src/elixir/priv/main.html
+/src/elixir/priv/static/main.js
 
 # misc.
 *.mkv

@@ -12,6 +12,7 @@ defmodule VizProxy.Application do
         {"localhost", [
           {"/ws", VizProxy.WSHandler, []},
           {"/", :cowboy_static, {:priv_file, :vizproxy, "main.html"}},
+          {"/static/[...]", :cowboy_static, {:priv_dir, :vizproxy, "static"}},
         ]},
       ])
 

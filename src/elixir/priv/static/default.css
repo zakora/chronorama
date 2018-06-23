@@ -1,1 +1,64 @@
-body {}
+@font-face {
+	font-family: "Fira Sans Condensed";
+	src: local("FiraSansCondensed-Regular"),
+		local("Fira Sans Condensed Regular"),
+		local("Fira Sans Condensed"),
+		url(/static/fonts/FiraSansCondensed-Regular.woff2) format("woff2"),
+		url(/static/fonts/FiraSansCondensed-Regular.woff) format("woff");
+}
+
+@font-face {
+	font-family: "Fira Sans Condensed Bold";
+	src: local("FiraSansCondensed-Bold"),
+		local("Fira Sans Condensed Bold"),
+		url(/static/fonts/FiraSansCondensed-Bold.woff2) format("woff2"),
+		url(/static/fonts/FiraSansCondensed-Bold.woff) format("woff");
+}
+
+/* Reset browser margins */
+body {
+	margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: "Fira Sans Condensed Bold", sans-serif;
+}
+
+#main {
+	background-color: #282d39;
+	color: #d8dee9;
+	font-family: "Fira Sans Condensed", sans-serif;
+}
+
+#app {
+	display: grid;
+	grid-template-columns: minmax(600px, auto) 300px;
+	width: 100vw;
+	height: 100vh;
+}
+
+#center {
+	grid-column: 1;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+}
+
+#menu {
+	grid-column: 2;
+	background-color: #151b27;
+}
+
+#title {
+	text-align: center;
+}
+
+
+#canvas {
+	height: 600px;
+	width: 900px;
+	border: 3px solid #6c7689;
+	background-color: #151b27;
+}

@@ -7,8 +7,8 @@ import Time exposing (Time)
 
 -- elm-lang
 import AnimationFrame exposing (diffs)
-import Html exposing (Html, button, div, text)
-import Html.Attributes exposing (placeholder)
+import Html exposing (Html, div)
+import Html.Attributes exposing (id, placeholder, value)
 import Html.Events exposing (onClick, onInput)
 import WebSocket
 
@@ -61,8 +61,8 @@ init =
   ( Model
       []
       -1.0
-      (Frustum -1.0 1.0 -1.0 1.0)
-      (Display 600 400)
+      (Frustum -1.5 1.5 -1.0 1.0)
+      (Display 900 600)
       False
   , Cmd.none
   )
@@ -88,7 +88,7 @@ update msg model =
       ({model | isStreaming = False}, WebSocket.send wsServer "PAUSE")
 
     NewMessage str ->
-      ({ model | points = str |> getPoints |> (List.map (toDisplaySpace model))} , Cmd.none)
+      ({ model | points = str |> getPoints} , Cmd.none)
 
     NewFrame time ->
       ({ model | diff = time}, Cmd.none)
@@ -231,54 +231,115 @@ subscriptions model =
 -- VIEW
 view : Model -> Html Msg
 view model =
-    div []
-    [ debug model
-    , controls model
-    , config model
-    , display model
-    ]
+    div
+      [ id "app" ]
+      [ div
+          [ id "center" ]
+          [ display model ]
+      , div
+          [ id "menu" ]
+          [ title
+          , actions model
+          , config model
+          ]
+      ]
 
 debug : Model -> Html Msg
 debug model =
   div [] ["diff: " ++ (toString model.diff) ++ "ms" |> Html.text]
 
+title : Html Msg
+title =
+  Html.h1
+    [ id "title" ]
+    [ "Chronorama" |> Html.text ]
 
-controls : Model -> Html Msg
-controls model =
+actions : Model -> Html Msg
+actions model =
   let
-    icon = if model.isStreaming then "⏸️" else "▶️"
+    streamAction = if model.isStreaming then "pause" else "play"
     msg = if model.isStreaming then PauseStream else StartStream
+
   in
-    div
-      [ onClick msg ]
-      [ icon |> Html.text ]
+
+  div
+    [ id "actions" ]
+    [ Html.section
+        []
+        [ Html.h2 [] [ "Actions" |> Html.text ]
+        , Html.button
+            [ onClick msg ]
+            [ streamAction |> Html.text ]
+        ]
+    ]
 
 config : Model -> Html Msg
 config model =
   div
-    []
-    [ "frustum: " |> Html.text
-    , Html.input [placeholder "xmin", onInput NewXMin] []
-    , Html.input [placeholder "xmax", onInput NewXMax] []
-    , Html.input [placeholder "ymin", onInput NewYMin] []
-    , Html.input [placeholder "ymax", onInput NewYMax] []
+    [ id "config" ]
+    [ Html.section
+        []
+        [ Html.h2
+            []
+            [ "Configuration" |> Html.text ]
+        , Html.fieldset
+            []
+            [ Html.legend [] [ "frustum" |> Html.text ]
+            , Html.label
+                []
+                [ "xmin" |> Html.text
+                , Html.input
+                    [ placeholder "xmin"
+                    , onInput NewXMin
+                    , value (model.frustum.xmin |> toString)
+                    ]
+                    []
+                ]
+            , Html.label
+                []
+                [ "xmax" |> Html.text
+                , Html.input
+                    [ placeholder "xmax"
+                    , onInput NewXMax
+                    , value (model.frustum.xmax |> toString)
+                    ]
+                    []
+                ]
+            , Html.label
+                []
+                [ "ymin" |> Html.text
+                , Html.input
+                    [ placeholder "ymin"
+                    , onInput NewYMin
+                    , value (model.frustum.ymin |> toString)
+                    ]
+                    []
+                ]
+            , Html.label
+                []
+                [ "ymax" |> Html.text
+                , Html.input
+                    [ placeholder "ymax"
+                    , onInput NewYMax
+                    , value (model.frustum.ymax |> toString)
+                    ]
+                    []
+                ]
+            ]
+        ]
     ]
+
 
 display : Model -> Html Msg
 display model =
-  collage
-    model.display.width
-    model.display.height
-    ((background model) :: (model.points |> List.map toSquare)) |> toHtml
+  div
+    [ id "canvas" ]
+    [ collage
+        model.display.width
+        model.display.height
+        (model.points |> List.map (toDisplaySpace model) |> List.map toSquare) |> toHtml
+    ]
 
-background : Model -> Form
-background model =
-  let
-    width = model.display.width |> toFloat
-    height = model.display.height |> toFloat
-
-  in
-    filled (rgb 21 30 46) (rect width height)
 
 -- VIEW HELPERS
 toSquare : Point -> Form

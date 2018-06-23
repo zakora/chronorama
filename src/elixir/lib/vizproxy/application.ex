@@ -68,7 +68,7 @@ defmodule VizProxy.WSHandler do
         VizProxy.Piper.set_streaming()
     end
 
-    Logger.debug(fn -> "Current state: #{inspect state}" end)
+    Logger.debug(fn -> "Current state: #{inspect VizProxy.Piper.get_status()}" end)
     {:ok, state}
   end
 

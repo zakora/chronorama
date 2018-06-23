@@ -291,7 +291,6 @@ config model =
                 , Html.input
                     [ placeholder "xmin"
                     , onInput NewXMin
-                    , value (model.frustum.xmin |> toString)
                     ]
                     []
                 ]
@@ -301,7 +300,6 @@ config model =
                 , Html.input
                     [ placeholder "xmax"
                     , onInput NewXMax
-                    , value (model.frustum.xmax |> toString)
                     ]
                     []
                 ]
@@ -311,7 +309,6 @@ config model =
                 , Html.input
                     [ placeholder "ymin"
                     , onInput NewYMin
-                    , value (model.frustum.ymin |> toString)
                     ]
                     []
                 ]
@@ -321,7 +318,6 @@ config model =
                 , Html.input
                     [ placeholder "ymax"
                     , onInput NewYMax
-                    , value (model.frustum.ymax |> toString)
                     ]
                     []
                 ]

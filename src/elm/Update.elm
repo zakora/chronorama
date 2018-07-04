@@ -23,6 +23,19 @@ type Msg
   | NewYMin String
   | NewYMax String
   | NewDelay String
+  | Zoom Float
+
+
+type FrustumField
+  = XMin
+  | XMax
+  | YMin
+  | YMax
+
+
+type ZoomLevel
+  = In
+  | Out
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -70,6 +83,13 @@ update msg model =
       in
       ({model | delay = delay }, WebSocket.send wsServer ("DELAY " ++ strDelay))
 
+    Zoom amount ->
+      let
+        level = if amount < 0 then In else Out
+        new = frustumZoom model.frustum level
+      in
+      ({model | frustum = new}, Cmd.none)
+
 
 -- UPDATE HELPERS
 
@@ -92,12 +112,6 @@ toDisplaySpace model p =
     Point x y
 
 
-type FrustumField
-  = XMin
-  | XMax
-  | YMin
-  | YMax
-
 -- Update a specific frustum field from a string
 setFrustumField : Frustum -> FrustumField -> String -> Frustum
 setFrustumField frustum field string =
@@ -114,12 +128,14 @@ setFrustumField frustum field string =
     YMax ->
       { frustum | ymax = withDefault frustum.ymax result }
 
+
 -- Parse strings to make 2D points
 getPoints : String -> List Point
 getPoints str = str
   |> split " "
   |> pairs
   |> points
+
 
 -- Group values by 2 to make pairs
 pairs : List String -> List (String, String)
@@ -147,6 +163,7 @@ recPairs values acc =
       in
         recPairs new_values (pair ++ acc)
 
+
 -- Convert string pairs to a list of points
 points : List (String, String) -> List Point
 points values =
@@ -171,3 +188,20 @@ recPoints values acc =
                 [Point val1 val2]
       in
          recPoints rest (pair ++ acc)
+
+
+-- Update the
+frustumZoom : Frustum -> ZoomLevel -> Frustum
+frustumZoom frustum level =
+  let
+    factor =
+      case level of
+        In  -> 1/2
+        Out -> 2
+
+  in
+    Frustum
+      (frustum.xmin * factor)
+      (frustum.xmax * factor)
+      (frustum.ymin * factor)
+      (frustum.ymax * factor)

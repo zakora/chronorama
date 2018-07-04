@@ -2,11 +2,12 @@ module View exposing (..)
 
 -- core
 import Color exposing (rgba, rgb)
+import Json.Decode as Json
 
 -- elm-lang
-import Html exposing (Html, div)
+import Html exposing (Html, Attribute, div)
 import Html.Attributes exposing (disabled, id, placeholder)
-import Html.Events exposing (onClick, onInput)
+import Html.Events exposing (on, onClick, onInput)
 
 -- graphics
 import Collage exposing (Form, collage, filled, move, rect, text)
@@ -62,17 +63,6 @@ actions model =
         ]
     ]
 
-label : String -> (String -> Msg) -> Html Msg
-label title msg =
-  Html.label
-    []
-    [ title |> Html.text
-    , Html.input
-        [ placeholder title
-        , onInput msg
-        ]
-        []
-    ]
 
 
 config : Model -> Html Msg
@@ -100,7 +90,9 @@ config model =
 display : Model -> Html Msg
 display model =
   div
-    [ id "canvas" ]
+    [ id "canvas"
+    , onWheel Zoom
+    ]
     [ collage
         model.display.width
         model.display.height
@@ -109,7 +101,26 @@ display model =
 
 
 -- VIEW HELPERS
+
+label : String -> (String -> Msg) -> Html Msg
+label title msg =
+  Html.label
+    []
+    [ title |> Html.text
+    , Html.input
+        [ placeholder title
+        , onInput msg
+        ]
+        []
+    ]
+
+
 toSquare : Point -> Form
 toSquare {x, y} =
   filled (rgba 250 250 250 0.7) (rect 7 7)
   |> move (x, y)
+
+
+onWheel : (Float -> msg) -> Attribute msg
+onWheel message =
+  on "wheel" (Json.map message (Json.at [ "deltaY" ] Json.float))

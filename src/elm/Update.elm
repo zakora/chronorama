@@ -143,17 +143,25 @@ frustumZoom : Frustum -> ZoomLevel -> Frustum
 frustumZoom frustum level =
   let
     frustumf = frustumFloat frustum
+    deltaX = frustumf.xmax - frustumf.xmin
+    deltaY = frustumf.ymax - frustumf.ymin
+
     factor =
       case level of
-        In  -> 1/2
-        Out -> 2
+        In  -> -0.25
+        Out ->  0.5
+
+    newXmin = frustumf.xmin - factor * deltaX
+    newXmax = frustumf.xmax + factor * deltaX
+    newYmin = frustumf.ymin - factor * deltaY
+    newYmax = frustumf.ymax + factor * deltaY
 
   in
     Frustum
-      (frustumf.xmin * factor |> toString)
-      (frustumf.xmax * factor |> toString)
-      (frustumf.ymin * factor |> toString)
-      (frustumf.ymax * factor |> toString)
+      (newXmin |> toString)
+      (newXmax |> toString)
+      (newYmin |> toString)
+      (newYmax |> toString)
 
 
 -- Parse strings to make 2D points

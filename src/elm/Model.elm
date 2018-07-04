@@ -15,10 +15,10 @@ type alias Point =
   }
 
 type alias Frustum =
-  { xmin : Float
-  , xmax : Float
-  , ymin : Float
-  , ymax : Float
+  { xmin : String
+  , xmax : String
+  , ymin : String
+  , ymax : String
   }
 
 type alias Display =

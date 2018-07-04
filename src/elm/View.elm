@@ -6,8 +6,8 @@ import Json.Decode as Json
 
 -- elm-lang
 import Html exposing (Html, Attribute, div)
-import Html.Attributes exposing (disabled, id, placeholder)
-import Html.Events exposing (on, onClick, onInput)
+import Html.Attributes exposing (disabled, id, placeholder, value)
+import Html.Events exposing (on, onClick, onInput, onSubmit)
 
 -- graphics
 import Collage exposing (Form, collage, filled, move, rect, text)
@@ -74,15 +74,19 @@ config model =
         [ Html.h2
             []
             [ "Configuration" |> Html.text ]
-        , Html.fieldset
+        , Html.form
             []
-            [ Html.legend [] [ "frustum" |> Html.text ]
-            , label "xmin" NewXMin
-            , label "xmax" NewXMax
-            , label "ymin" NewYMin
-            , label "ymax" NewYMax
+            [ Html.fieldset
+                []
+                [ Html.legend [] [ "frustum" |> Html.text ]
+                , label "xmin" model.frustum.xmin NewXMin
+                , label "xmax" model.frustum.xmax NewXMax
+                , label "ymin" model.frustum.ymin NewYMin
+                , label "ymax" model.frustum.ymax NewYMax
+                ]
+            -- TODO check how to implement minimum delay setting
+            -- , label "delay" NewDelay
             ]
-        , label "delay" NewDelay
         ]
     ]
 
@@ -102,13 +106,14 @@ display model =
 
 -- VIEW HELPERS
 
-label : String -> (String -> Msg) -> Html Msg
-label title msg =
+label : String -> String -> (String -> Msg) -> Html Msg
+label title val msg =
   Html.label
     []
     [ title |> Html.text
     , Html.input
         [ placeholder title
+        , value val
         , onInput msg
         ]
         []

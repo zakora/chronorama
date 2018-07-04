@@ -96,14 +96,16 @@ update msg model =
 toDisplaySpace : Model -> Point -> Point
 toDisplaySpace model p =
   let
-    ixmin = model.frustum.xmin
-    ixmax = model.frustum.xmax
+    frustum = frustumFloat model.frustum
+
+    ixmin = frustum.xmin
+    ixmax = frustum.xmax
     dxmin = (toFloat -model.display.width) / 2
     dxmax = (toFloat model.display.width) / 2
     x = ((p.x - ixmin) / (ixmax - ixmin)) * (dxmax - dxmin) + dxmin
 
-    iymin = model.frustum.ymin
-    iymax = model.frustum.ymax
+    iymin = frustum.ymin
+    iymax = frustum.ymax
     dymin = (toFloat -model.display.height) / 2
     dymax = (toFloat model.display.height) / 2
     y = ((p.y - iymin) / (iymax - iymin)) * (dymax - dymin) + dymin
@@ -115,18 +117,43 @@ toDisplaySpace model p =
 -- Update a specific frustum field from a string
 setFrustumField : Frustum -> FrustumField -> String -> Frustum
 setFrustumField frustum field string =
-  let
-    result = string |> String.toFloat
-  in
   case field of
     XMin ->
-      { frustum | xmin = withDefault frustum.xmin result }
+      { frustum | xmin = string }
     XMax ->
-      { frustum | xmax = withDefault frustum.xmax result }
+      { frustum | xmax = string }
     YMin ->
-      { frustum | ymin = withDefault frustum.ymin result }
+      { frustum | ymin = string }
     YMax ->
-      { frustum | ymax = withDefault frustum.ymax result }
+      { frustum | ymax = string }
+
+
+-- convert frustum values from strings to floats
+frustumFloat : Frustum -> { xmax : Float, xmin : Float, ymax : Float, ymin : Float }
+frustumFloat frustum =
+  { xmin = withDefault 0.0 (String.toFloat frustum.xmin)
+  , xmax = withDefault 0.0 (String.toFloat frustum.xmax)
+  , ymin = withDefault 0.0 (String.toFloat frustum.ymin)
+  , ymax = withDefault 0.0 (String.toFloat frustum.ymax)
+  }
+
+
+-- Update the frustum by magnifying or shrinking it
+frustumZoom : Frustum -> ZoomLevel -> Frustum
+frustumZoom frustum level =
+  let
+    frustumf = frustumFloat frustum
+    factor =
+      case level of
+        In  -> 1/2
+        Out -> 2
+
+  in
+    Frustum
+      (frustumf.xmin * factor |> toString)
+      (frustumf.xmax * factor |> toString)
+      (frustumf.ymin * factor |> toString)
+      (frustumf.ymax * factor |> toString)
 
 
 -- Parse strings to make 2D points
@@ -188,20 +215,3 @@ recPoints values acc =
                 [Point val1 val2]
       in
          recPoints rest (pair ++ acc)
-
-
--- Update the
-frustumZoom : Frustum -> ZoomLevel -> Frustum
-frustumZoom frustum level =
-  let
-    factor =
-      case level of
-        In  -> 1/2
-        Out -> 2
-
-  in
-    Frustum
-      (frustum.xmin * factor)
-      (frustum.xmax * factor)
-      (frustum.ymin * factor)
-      (frustum.ymax * factor)

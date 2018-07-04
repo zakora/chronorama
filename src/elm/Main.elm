@@ -27,7 +27,7 @@ init =
   ( Model
       []
       -1.0
-      (Frustum -1.5 1.5 -1.0 1.0)
+      (Frustum "-1.5" "1.5" "-1.0" "1.0")
       0.0
       (Display 900 600)
       False

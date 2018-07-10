@@ -2,7 +2,7 @@
 
 Chronorama is a visualization tool for 2D time series.
 
-image::assets/chronorama.gif[Chronorama demo video]
+image::assets/chronorama_blue.gif[Chronorama demo video]
 
 '''
 
